@@ -677,11 +677,13 @@ void CONFIG_SetGameControllerDefaultsClear()
         CONFIG_SetJoystickAnalogAxisFunction(i, -1);
     }
 }
+
 #ifdef __ANDROID__
 extern int g_screenWidthCmd;
 extern int g_screenHeightCmd;
 extern int g_screenBppCmd;
 #endif
+
 int CONFIG_ReadSetup(void)
 {
     char tempbuf[1024];

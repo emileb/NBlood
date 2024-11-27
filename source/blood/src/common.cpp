@@ -97,6 +97,7 @@ int32_t g_groupFileHandle;
 
 static struct strllist *CommandPaths, *CommandGrps;
 
+
 void G_ExtPreInit(int32_t argc,char const * const * argv)
 {
     g_useCwd = G_CheckCmdSwitch(argc, argv, "-usecwd");

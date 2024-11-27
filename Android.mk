@@ -9,10 +9,11 @@ $(LOCAL_PATH)/glad/include \
 $(LOCAL_PATH)/build/include \
 $(LOCAL_PATH)/audiolib/include \
 $(LOCAL_PATH)/mact/include \
-$(LOCAL_PATH)/duke3d/src \
+$(LOCAL_PATH)/blood/src \
 $(LOCAL_PATH)/mimalloc/include \
 $(LOCAL_PATH)/libxmp-lite/include \
 $(LOCAL_PATH)/imgui/include \
+$(LOCAL_PATH)/libsmackerdec/include \
 $(SDL_INCLUDE_PATHS) \
 $(TOP_DIR)/Clibs_OpenTouch \
 $(TOP_DIR)/Clibs_OpenTouch\raze \
@@ -20,7 +21,7 @@ $(TOP_DIR)/MobileTouchControls  \
 $(TOP_DIR)/AudioLibs_OpenTouch/liboggvorbis/include  \
 
 
-LOCAL_CFLAGS := -Wno-ignored-attributes -DRENDERTYPESDL=1 -DUSE_OPENGL -DHAVE_XMP -DHAVE_VORBIS -DHAVE_FLAC -DENGINE_NAME=\"eduke32\" -DEDUKE32 -w -Wno-format  -Wformat=0 -Wno-format-security
+LOCAL_CFLAGS := -O1 -Wno-ignored-attributes -DNOONE_EXTENSIONS=1 -DRENDERTYPESDL=1 -DUSE_OPENGL -DHAVE_XMP -DHAVE_VORBIS -DHAVE_FLAC -DENGINE_NAME=\"eduke32\" -DEDUKE32 -w -Wno-format  -Wformat=0 -Wno-format-security
 LOCAL_CPPFLAGS := -fexceptions
 #-DUSE_LIBVPX
 
@@ -148,6 +149,94 @@ duke3d_game_objs := \
     duke3d/src/text.cpp \
     duke3d/src/dnames.cpp \
 
+blood_game_objs := \
+	blood/src/blood.cpp \
+	blood/src/actor.cpp \
+	blood/src/ai.cpp \
+	blood/src/aibat.cpp \
+	blood/src/aibeast.cpp \
+	blood/src/aiboneel.cpp \
+	blood/src/aiburn.cpp \
+	blood/src/aicaleb.cpp \
+	blood/src/aicerber.cpp \
+	blood/src/aicult.cpp \
+	blood/src/aigarg.cpp \
+	blood/src/aighost.cpp \
+	blood/src/aigilbst.cpp \
+	blood/src/aihand.cpp \
+	blood/src/aihound.cpp \
+	blood/src/aiinnoc.cpp \
+	blood/src/aipod.cpp \
+	blood/src/airat.cpp \
+	blood/src/aispid.cpp \
+	blood/src/aitchern.cpp \
+	blood/src/aizomba.cpp \
+	blood/src/aizombf.cpp \
+	blood/src/asound.cpp \
+	blood/src/barf.cpp \
+	blood/src/callback.cpp \
+	blood/src/choke.cpp \
+	blood/src/common.cpp \
+	blood/src/config.cpp \
+	blood/src/controls.cpp \
+	blood/src/credits.cpp \
+	blood/src/db.cpp \
+	blood/src/demo.cpp \
+	blood/src/dude.cpp \
+	blood/src/endgame.cpp \
+	blood/src/eventq.cpp \
+	blood/src/fire.cpp \
+	blood/src/fx.cpp \
+	blood/src/gamemenu.cpp \
+	blood/src/gameutil.cpp \
+	blood/src/getopt.cpp \
+	blood/src/gfx.cpp \
+	blood/src/gib.cpp \
+	blood/src/globals.cpp \
+	blood/src/gui.cpp \
+	blood/src/inifile.cpp \
+	blood/src/iob.cpp \
+	blood/src/levels.cpp \
+	blood/src/loadsave.cpp \
+	blood/src/map2d.cpp \
+	blood/src/menu.cpp \
+	blood/src/messages.cpp \
+	blood/src/mirrors.cpp \
+	blood/src/misc.cpp \
+	blood/src/network.cpp \
+	blood/src/osdcmd.cpp \
+	blood/src/player.cpp \
+	blood/src/qav.cpp \
+	blood/src/qheap.cpp \
+	blood/src/replace.cpp \
+	blood/src/resource.cpp \
+	blood/src/screen.cpp \
+	blood/src/sectorfx.cpp \
+	blood/src/seq.cpp \
+	blood/src/sfx.cpp \
+	blood/src/sound.cpp \
+	blood/src/tile.cpp \
+	blood/src/trig.cpp \
+	blood/src/triggers.cpp \
+	blood/src/view.cpp \
+	blood/src/warp.cpp \
+	blood/src/weapon.cpp \
+
+
+    blood_game_objs += blood/src/nnextsif.cpp
+	blood_game_objs += blood/src/nnexts.cpp
+	blood_game_objs += blood/src/nnextstr.cpp
+	blood_game_objs += blood/src/nnextcdud.cpp
+    blood_game_objs += blood/src/aicdud.cpp
+
+
+libsmackerdec_objs := \
+    libsmackerdec/src/BitReader.cpp \
+    libsmackerdec/src/FileStream.cpp \
+    libsmackerdec/src/HuffmanVLC.cpp \
+    libsmackerdec/src/LogError.cpp \
+    libsmackerdec/src/SmackerDecoder.cpp \
+
 
 mimalloc_objs := \
     mimalloc/src/alloc.c \
@@ -180,7 +269,7 @@ ANDROID_SRC_FILES = \
      ../../Clibs_OpenTouch/touch_interface_base.cpp \
      ../../Clibs_OpenTouch/android_jni_inc.cpp \
 
-LOCAL_SRC_FILES =  $(ANDROID_SRC_FILES) $(engine_objs) $(glad_objs) $(mact_objs) $(audiolib_objs) $(duke3d_common_editor_objs) $(duke3d_game_objs) $(imgui_objs)
+LOCAL_SRC_FILES =  $(ANDROID_SRC_FILES) $(engine_objs) $(glad_objs) $(mact_objs) $(audiolib_objs) $(blood_game_objs)  $(libsmackerdec_objs) $(imgui_objs)
 
 LOCAL_LDLIBS :=  -llog -lOpenSLES -lGLESv2
 

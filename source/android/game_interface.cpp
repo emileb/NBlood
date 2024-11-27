@@ -24,7 +24,6 @@
 #include "control.h"
 #include "_control.h"
 #include "function.h"
-#include "anim.h"
 
 
 #include "gameTypes.h" // From Clibs_OpenTouch repo
@@ -200,13 +199,13 @@ void PortableAction(int state, int action)
 			break;
 
 		case PORT_ACT_ATTACK:
-			changeActionState(state, gamefunc_Fire);
+			changeActionState(state, gamefunc_Weapon_Fire);
 			break;
 
 		case PORT_ACT_ALT_ATTACK:
-			changeActionState(state, gamefunc_Alt_Fire);
+			changeActionState(state, gamefunc_Weapon_Special_Fire);
 			break;
-
+/*
 		case PORT_ACT_TOGGLE_ALT_ATTACK:
 			if(state)
 			{
@@ -217,13 +216,13 @@ void PortableAction(int state, int action)
 			}
 
 			break;
-
+*/
 		case PORT_ACT_JUMP:
 			changeActionState(state, gamefunc_Jump);
 			break;
 
 		case PORT_ACT_KICK:
-			changeActionState(state, gamefunc_Quick_Kick);
+			//changeActionState(state, gamefunc_Quick_Kick);
 			break;
 
 		case PORT_ACT_DOWN:
@@ -247,7 +246,7 @@ void PortableAction(int state, int action)
 			break;
 
 		case PORT_ACT_MAP:
-			changeActionState(state, gamefunc_Map);
+			changeActionState(state, gamefunc_Map_Toggle);
 			break;
 
 		case PORT_ACT_QUICKLOAD:
@@ -305,11 +304,11 @@ void PortableAction(int state, int action)
 			break;
 
 		case PORT_ACT_INVUSE:
-			changeActionState(state, gamefunc_Inventory);
+			//changeActionState(state, gamefunc_Inventory);
 			break;
 
 		case PORT_ACT_INVDROP:
-			changeActionState(state, gamefunc_Inventory);
+			//changeActionState(state, gamefunc_Inventory);
 			break;
 
 		case PORT_ACT_INVPREV:
@@ -321,18 +320,18 @@ void PortableAction(int state, int action)
 			break;
 
 		case PORT_ACT_WEAP_ALT:
-			changeActionState(state, gamefunc_Alt_Weapon);
+//			changeActionState(state, gamefunc_Alt_Weapon);
 			break;
 
 		// IONFURY
 		case PORT_ACT_RELOAD:
-			changeActionState(state, gamefunc_Steroids); // Reload is Steroids
+//			changeActionState(state, gamefunc_Steroids); // Reload is Steroids
 			break;
 		case PORT_ACT_MEDKIT:
-			changeActionState(state, gamefunc_MedKit);
+//			changeActionState(state, gamefunc_MedKit);
 			break;
 		case PORT_ACT_RADAR:
-			changeActionState(state, gamefunc_NightVision); // Radar is Nightvision
+//			changeActionState(state, gamefunc_NightVision); // Radar is Nightvision
 			break;
 		}
 	}
@@ -416,13 +415,22 @@ void PortableInit(int argc, const char ** argv)
 
 	eduke32_android_main(argc, (char **)argv);
 }
-
+/*
 bool            g_bindingbutton = false;
 extern playerdata_t     *const g_player;
 extern int inExtraScreens; //In screens.c
 extern int myconnectindex;
+ */
+extern bool gGameStarted;
+extern INPUT_MODE gInputMode;
+
 touchscreemode_t PortableGetScreenMode()
 {
+	if(gGameStarted && gInputMode == INPUT_MODE_0)
+		return TS_GAME;
+	else
+		return TS_MENU;
+/*
 	if(g_bindingbutton) {
 		return TS_CUSTOM;
 	}
@@ -438,6 +446,7 @@ touchscreemode_t PortableGetScreenMode()
 	}
 	else
 		return TS_BLANK;
+		*/
 }
 
 
@@ -478,11 +487,10 @@ void Mobile_AM_controls(double *zoom, double *pan_x, double *pan_y)
 
 extern "C" int blockGamepad(void);
 
-#define ANDROIDMOVEFACTOR           64000
+#define ANDROIDMOVEFACTOR           (2 << 10)
 #define ANDROIDLOOKFACTOR          1600000
 
-#define ANDROIDPITCHFACTORJOYSTICK          2000
-#define ANDROIDYAWFACTORJOYSTICK            4000
+
 
 void Mobile_IN_Move(ControlInfo *input)
 {

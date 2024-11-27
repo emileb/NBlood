@@ -1232,6 +1232,13 @@ SWITCH switches[] = {
     { "conf", 43, 1 },
     { "noconsole", 43, 0 },
     { "s", 44, 1 },
+#ifdef __ANDROID__
+    { "screen_bpp", 45, 1 },
+    { "screen_width", 46, 1 },
+    { "screen_height", 47, 1 },
+    { "secondary_path", 48, 1 },
+#endif
+
     { NULL, 0, 0 }
 };
 
@@ -1303,6 +1310,12 @@ void PrintHelp(void)
 #endif
     exit(0);
 }
+
+#ifdef __ANDROID__
+int g_screenWidthCmd = 640;
+int g_screenHeightCmd =480;
+int g_screenBppCmd = 32;
+#endif
 
 void ParseOptions(void)
 {
@@ -1551,6 +1564,21 @@ void ParseOptions(void)
             gGameOptions.nDifficultyQuantity = gSkill;
             gGameOptions.nDifficultyHealth = gSkill;
             break;
+#ifdef __ANDROID__
+        case 45:
+            g_screenBppCmd = atoi(OptArgv[0]);
+            break;
+        case 46:
+            g_screenWidthCmd = atoi(OptArgv[0]);
+            break;
+        case 47:
+            g_screenHeightCmd = atoi(OptArgv[0]);
+            break;
+        case 48:
+            initprintf("Adding secondary path: %s\n", OptArgv[0]);
+            addsearchpath_user(OptArgv[0], 0);
+            break;
+#endif
         }
     }
 #if 0

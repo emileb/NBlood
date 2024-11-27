@@ -40,7 +40,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "view.h"
 
 #ifdef __ANDROID__
-# include "android.h"
+//# include "android.h"
 #endif
 
 #if defined RENDERTYPESDL && defined SDL_TARGET && SDL_TARGET > 1
@@ -243,23 +243,28 @@ void CONFIG_SetDefaultKeys(const char (*keyptr)[MAXGAMEFUNCLEN], bool lazy/*=fal
     }
 }
 
+#ifdef __ANDROID__
+extern int g_screenWidthCmd;
+extern int g_screenHeightCmd;
+extern int g_screenBppCmd;
+#endif
 
 void CONFIG_SetDefaults(void)
 {
     scripthandle = -1;
 
 #ifdef __ANDROID__
-    droidinput.forward_sens = 5.f;
-    droidinput.gameControlsAlpha = 0.5;
-    droidinput.hideStick = 0;
-    droidinput.pitch_sens = 5.f;
-    droidinput.quickSelectWeapon = 1;
-    droidinput.strafe_sens = 5.f;
-    droidinput.toggleCrouch = 1;
-    droidinput.yaw_sens = 5.f;
+    if(g_screenWidthCmd)
+        gSetup.xdim = g_screenWidthCmd;
 
-    gSetup.xdim = droidinfo.screen_width;
-    gSetup.ydim = droidinfo.screen_height;
+    if(g_screenHeightCmd)
+        gSetup.ydim = g_screenHeightCmd;
+
+    if(g_screenBppCmd)
+        gSetup.bpp = g_screenBppCmd;
+
+    //ud.screenfade = 0;
+   gSetup.noautoload = 0; // This is now controlled by the command line
 #else
 # if defined RENDERTYPESDL && SDL_MAJOR_VERSION > 1
     uint32_t inited = SDL_WasInit(SDL_INIT_VIDEO);
@@ -291,7 +296,7 @@ void CONFIG_SetDefaults(void)
 #if defined(_WIN32)
     MixRate = 44100;
 #elif defined __ANDROID__
-    MixRate = droidinfo.audio_sample_rate;
+    //MixRate = droidinfo.audio_sample_rate;
 #else
     MixRate = 48000;
 #endif
@@ -689,6 +694,7 @@ void CONFIG_SetupJoystick(void)
 }
 
 
+
 int CONFIG_ReadSetup(void)
 {
     char tempbuf[1024];
@@ -802,6 +808,20 @@ int CONFIG_ReadSetup(void)
     }
 
     if (gSetup.bpp < 8) gSetup.bpp = 32;
+
+#ifdef __ANDROID__
+    if(g_screenWidthCmd)
+        gSetup.xdim = g_screenWidthCmd;
+
+    if(g_screenHeightCmd)
+        gSetup.ydim = g_screenHeightCmd;
+
+    if(g_screenBppCmd)
+        gSetup.bpp = g_screenBppCmd;
+
+    //ud.screenfade = 0;
+   gSetup.noautoload = 0; // This is now controlled by the command line
+#endif
 
 #ifdef POLYMER
     int32_t rendmode = 0;

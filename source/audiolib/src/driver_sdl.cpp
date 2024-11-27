@@ -32,8 +32,8 @@
 #include "vfs.h"
 
 #ifdef __ANDROID__
-#include "duke3d.h"
-#include "android.h"
+//#include "duke3d.h"
+//#include "android.h"
 #endif
 
 enum
