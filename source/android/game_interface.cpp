@@ -508,12 +508,12 @@ void Mobile_IN_Move(ControlInfo *input)
 		// Add pitch
 		input->mousey += -look_pitch_mouse * 50000;
 		look_pitch_mouse = 0;
-		input->dpitch += look_pitch_joy * 30000;
+		input->mousey += look_pitch_joy * 1000;
 
 		// Add yaw
 		input->mousex += -look_yaw_mouse * 100000;
 		look_yaw_mouse = 0;
-		input->dyaw += -look_yaw_joy * 20000;
+		input->mousex += -look_yaw_joy * 600;
 	}
 
 	if(cmd_to_run)
