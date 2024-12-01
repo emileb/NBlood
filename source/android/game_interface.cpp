@@ -415,12 +415,8 @@ void PortableInit(int argc, const char ** argv)
 
 	eduke32_android_main(argc, (char **)argv);
 }
-/*
+
 bool            g_bindingbutton = false;
-extern playerdata_t     *const g_player;
-extern int inExtraScreens; //In screens.c
-extern int myconnectindex;
- */
 extern bool gGameStarted;
 extern INPUT_MODE gInputMode;
 
@@ -429,24 +425,12 @@ touchscreemode_t PortableGetScreenMode()
 	if(gGameStarted && gInputMode == INPUT_MODE_0)
 		return TS_GAME;
 	else
-		return TS_MENU;
-/*
-	if(g_bindingbutton) {
-		return TS_CUSTOM;
-	}
-	else if (g_animPtr || inExtraScreens)
-		return TS_BLANK;
-	else if(g_player[myconnectindex].ps->gm & MODE_MENU)
-		return TS_MENU;
-	else if ((g_player[myconnectindex].ps->gm & MODE_GAME)) {
-		if (g_player[myconnectindex].ps->dead_flag)
-			return TS_GAME;
-		else
-			return TS_GAME;
-	}
-	else
-		return TS_BLANK;
-		*/
+    {
+        if(g_bindingbutton)
+            return TS_CUSTOM;
+        else
+            return TS_MENU;
+    }
 }
 
 

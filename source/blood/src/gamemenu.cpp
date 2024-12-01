@@ -1157,6 +1157,10 @@ CGameMenuItemKeyList::CGameMenuItemKeyList(const char *a1, int a2, int a3, int a
     nGameFuncs = a7;
 }
 
+#ifdef __ANDROID__
+extern bool g_bindingbutton;
+#endif
+
 void CGameMenuItemKeyList::Scan(void)
 {
     KB_FlushKeyboardQueue();
@@ -1164,6 +1168,9 @@ void CGameMenuItemKeyList::Scan(void)
     KB_ClearKeysDown();
     KB_LastScan = 0;
     bScan = true;
+#ifdef __ANDROID__
+    g_bindingbutton = true;
+#endif
 }
 
 extern uint8_t KeyboardKeys[NUMGAMEFUNCTIONS][2];
@@ -1282,6 +1289,9 @@ bool CGameMenuItemKeyList::Event(CGameMenuEvent &event)
             keyFlushScans();
             keyFlushChars();
             bScan = 0;
+#ifdef __ANDROID__
+            g_bindingbutton = false;
+#endif
         }
         return false;
     }
