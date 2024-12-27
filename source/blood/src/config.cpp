@@ -336,7 +336,7 @@ void CONFIG_SetDefaults(void)
     //ud.config.ShowWeapons     = 0;
     SoundToggle     = 1;
     CDAudioToggle = 0;
-    MusicDevice = ASS_AutoDetect;
+    MusicDevice = ASS_SF2;
     gFMPianoFix = 1;
     //ud.config.VoiceToggle     = 5;  // bitfield, 1 = local, 2 = dummy, 4 = other players in DM
     useprecache     = 1;
