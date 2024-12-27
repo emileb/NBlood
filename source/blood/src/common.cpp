@@ -97,7 +97,9 @@ int32_t g_groupFileHandle;
 
 static struct strllist *CommandPaths, *CommandGrps;
 
-
+#ifdef __ANDROID__
+extern char userFilesSubFolder[];
+#endif
 void G_ExtPreInit(int32_t argc,char const * const * argv)
 {
     g_useCwd = G_CheckCmdSwitch(argc, argv, "-usecwd");
@@ -153,7 +155,24 @@ void G_ExtInit(void)
     {
         char *homedir;
         int32_t asperr;
+#ifdef __ANDROID__
+        {
+            homedir = getenv("USER_FILES");
+            Bsnprintf(cwd, ARRAY_SIZE(cwd), "%s/%s" ,homedir, userFilesSubFolder);
+            asperr = addsearchpath(cwd);
+            if (asperr == -2)
+            {
+                if (buildvfs_mkdir(cwd,S_IRWXU) == 0) asperr = addsearchpath(cwd);
+                else asperr = -1;
+            }
+            if (asperr == 0)
+                buildvfs_chdir(cwd);
 
+            if(g_modDir[0] != '/') // Create the mod folder so saves work, not sure where this is supposed to be created in the engine but it wasn't for me
+                buildvfs_mkdir(g_modDir,S_IRWXU);
+       }
+
+#else
         if ((homedir = Bgethomedir()))
         {
             Bsnprintf(cwd,sizeof(cwd),"%s/"
@@ -175,6 +194,7 @@ void G_ExtInit(void)
                 Bchdir(cwd);
             Xfree(homedir);
         }
+#endif
     }
 }
 
