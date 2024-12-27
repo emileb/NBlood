@@ -205,18 +205,18 @@ void PortableAction(int state, int action)
 		case PORT_ACT_ALT_ATTACK:
 			changeActionState(state, gamefunc_Weapon_Special_Fire);
 			break;
-/*
+
 		case PORT_ACT_TOGGLE_ALT_ATTACK:
 			if(state)
 			{
-				if(buttonDown(gamefunc_Alt_Fire))
-					changeActionState(0, gamefunc_Alt_Fire);
+				if(buttonDown(gamefunc_Weapon_Special_Fire))
+					changeActionState(0, gamefunc_Weapon_Special_Fire);
 				else
-					changeActionState(1, gamefunc_Alt_Fire);
+					changeActionState(1, gamefunc_Weapon_Special_Fire);
 			}
 
 			break;
-*/
+
 		case PORT_ACT_JUMP:
 			changeActionState(state, gamefunc_Jump);
 			break;
@@ -304,7 +304,7 @@ void PortableAction(int state, int action)
 			break;
 
 		case PORT_ACT_INVUSE:
-			//changeActionState(state, gamefunc_Inventory);
+			changeActionState(state, gamefunc_Inventory_Use);
 			break;
 
 		case PORT_ACT_INVDROP:
@@ -406,13 +406,7 @@ extern "C"
 // Start game, does not return!
 void PortableInit(int argc, const char ** argv)
 {
-	if(gameType == RAZE_GAME_IONFURY)
-		strcpy(userFilesSubFolder, "ionfury");
-	else if(gameType == RAZE_GAME_EDUKE32)
-		strcpy(userFilesSubFolder, "eduke32");
-	else
-		strcpy(userFilesSubFolder, "unknown");
-
+    strcpy(userFilesSubFolder, "nblood");
 	eduke32_android_main(argc, (char **)argv);
 }
 
