@@ -555,7 +555,14 @@ char LASER::UpdateProperties()
 
     if (pXOwn->data2 != thickness && irngok(pXOwn->data2, 1, 255))
     {
+#ifdef __ANDROID__
+        if (vertical)
+            xrepeat = pXOwn->data2;
+        else
+            yrepeat = pXOwn->data2;
+#else
         (vertical) ? xrepeat = pXOwn->data2 : yrepeat = pXOwn->data2;
+#endif
         thickness = pXOwn->data2;
         r = 1;
     }

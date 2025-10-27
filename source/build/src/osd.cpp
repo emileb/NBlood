@@ -12,7 +12,13 @@
 #include "scancodes.h"
 #include "atomiclist.h"
 
+
 #include "xxhash_config.h"
+#ifdef __ANDROID__
+#include <android/log.h>
+#include "LogWritter.h"
+#endif
+
 
 #include "vfs.h"
 
@@ -822,6 +828,7 @@ void OSD_Init(void)
     hash_init(&h_osd);
     hash_init(&h_cvars);
 
+
 #ifdef USE_MIMALLOC
     mi_register_output((mi_output_fun *)(void *)&mi_log, NULL);
 #endif
@@ -940,6 +947,10 @@ void OSD_SetParameters(int promptShade, int promptPal, int editShade, int editPa
     draw.highlight   = highlight;
 
     osd->flags |= flags;
+
+#ifdef __ANDROID__ // Always allow console on Android
+    osd->flags &= ~OSD_PROTECTED;
+#endif
 }
 
 
@@ -1734,7 +1745,10 @@ void OSD_Puts(const char *putstr)
 {
     if (putstr[0] == 0 || !osd)
         return;
-
+#ifdef __ANDROID__
+    __android_log_print(ANDROID_LOG_INFO,"DUKE", "%s",putstr);
+     LogWritter_Write(putstr);
+#endif
     osd->log.m_pending.push(new AtomicLogString(Xstrdup(putstr)));
     OSD_WritePendingLines();
 }
