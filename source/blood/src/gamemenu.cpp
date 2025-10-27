@@ -1219,6 +1219,10 @@ CGameMenuItemKeyList::CGameMenuItemKeyList(const char *a1, int a2, int a3, int a
     bCheckConflict = true;
 }
 
+#ifdef __ANDROID__
+extern bool g_bindingbutton;
+#endif
+
 void CGameMenuItemKeyList::Scan(void)
 {
     KB_FlushKeyboardQueue();
@@ -1226,6 +1230,9 @@ void CGameMenuItemKeyList::Scan(void)
     KB_ClearKeysDown();
     KB_LastScan = 0;
     bScan = true;
+#ifdef __ANDROID__
+    g_bindingbutton = true;
+#endif
 }
 
 void CGameMenuItemKeyList::CheckKeyConflict(void)
@@ -1392,6 +1399,9 @@ bool CGameMenuItemKeyList::Event(CGameMenuEvent &event)
             keyFlushScans();
             keyFlushChars();
             bScan = 0;
+#ifdef __ANDROID__
+            g_bindingbutton = false;
+#endif
         }
         return false;
     }

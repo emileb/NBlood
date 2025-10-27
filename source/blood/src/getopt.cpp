@@ -31,7 +31,7 @@ char const * const *margv;
 const char *OptArgv[16];
 int OptArgc;
 const char *OptFull;
-const char *SwitchChars = "-/";
+const char *SwitchChars = "-";
 
 int GetOptions(SWITCH *switches)
 {

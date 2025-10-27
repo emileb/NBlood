@@ -5192,17 +5192,6 @@ FAKE_F3:
             ud.last_overhead = ud.overhead_on;
         }
 
-#ifdef __ANDROID__
-        if (ud.overhead_on == 1)
-            ud.scrollmode = 0;
-        else if (ud.overhead_on == 2)
-        {
-            ud.scrollmode = 1;
-            ud.folx = g_player[screenpeek].ps->opos.x;
-            ud.foly = g_player[screenpeek].ps->opos.y;
-            ud.fola = g_player[screenpeek].ps->oang;
-        }
-#endif
         g_restorePalette = 1;
         G_UpdateScreenArea();
     }
@@ -6038,6 +6027,7 @@ static void G_Cleanup(void)
 void G_Shutdown(void)
 {
     CONFIG_WriteSetup(0);
+#ifndef __ANDROID__ // Don't do this as the process is killed
     S_SoundShutdown();
     S_MusicShutdown();
     CONTROL_Shutdown();
@@ -6047,6 +6037,7 @@ void G_Shutdown(void)
     FreeGroups();
     OSD_Cleanup();
     uninitgroupfile();
+#endif
     Bfflush(NULL);
 }
 
@@ -6469,6 +6460,7 @@ void Net_DedicatedServerStdin(void)
 }
 #endif
 
+
 void drawframe_do(void)
 {
     MICROPROFILE_SCOPEI("Game", EDUKE32_FUNCTION, MP_YELLOWGREEN);
@@ -6541,6 +6533,7 @@ void dukeFillInputForTic(void)
 
     localInput = {};
 }
+
 
 //void dukeCreateFrameRoutine(void)
 //{
@@ -6651,7 +6644,10 @@ int app_main(int argc, char const* const* argv)
     G_MaybeAllocPlayer(0);
 
     G_CheckCommandLine(argc,argv);
-
+#ifdef __ANDROID__
+    if(g_modDir[0] != '/') // Create the mod folder so saves work, not sure where this is supposed to be created in the engine but it wasn't for me
+        buildvfs_mkdir(g_modDir,S_IRWXU);
+#endif
     // This needs to happen afterwards, as G_CheckCommandLine() is where we set
     // up the command-line-provided search paths (duh).
     G_ExtInit();
@@ -7176,7 +7172,6 @@ MAIN_LOOP_RESTART:
                 Net_DedicatedServerStdin();
 #endif
             }
-
             //g_switchRoutine(co_drawframe);
             drawframe_do();
         }
