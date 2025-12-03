@@ -485,6 +485,12 @@ void Mobile_IN_Move(ControlInfo *input)
 	int blockMove = blockGamepad() & ANALOGUE_AXIS_FWD;
 	int blockLook = blockGamepad() & ANALOGUE_AXIS_PITCH;
 
+    static uint64_t timeLast = getMS();
+    uint64_t timeNow = getMS();
+
+    float timeDelta = timeNow - timeLast;
+    timeLast = timeNow;
+
 	if(!blockMove)
 	{
         float fwdSpeed = forwardmove_android;
@@ -505,12 +511,12 @@ void Mobile_IN_Move(ControlInfo *input)
 		// Add pitch
 		input->mousey += -look_pitch_mouse * 50000;
 		look_pitch_mouse = 0;
-		input->mousey += look_pitch_joy * 1000;
+		input->mousey += look_pitch_joy * timeDelta * 30;
 
 		// Add yaw
 		input->mousex += -look_yaw_mouse * 100000;
 		look_yaw_mouse = 0;
-		input->mousex += -look_yaw_joy * 600;
+		input->mousex += -look_yaw_joy * timeDelta * 50;
 	}
 
 	if(cmd_to_run)
