@@ -511,8 +511,8 @@ void ctrlGetInput(void)
         input.forward -= info.mousey;
 
 #ifdef __ANDROID__
-    input.strafe -= info.dx>>1;
-    input.forward -= info.dz>>1;
+    input.strafe -= int(scaleAdjustmentToInterval(info.dx)/2.f);
+    input.forward -= int(scaleAdjustmentToInterval(info.dz)/2.f);
 #endif
 
     if (CONTROL_JoystickEnabled) // controller input
