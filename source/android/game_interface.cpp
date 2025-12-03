@@ -475,10 +475,7 @@ void Mobile_AM_controls(double *zoom, double *pan_x, double *pan_y)
 
 extern "C" int blockGamepad(void);
 
-#define ANDROIDMOVEFACTOR           (2 << 10)
-#define ANDROIDLOOKFACTOR          1600000
-
-
+#define ANDROIDMOVEFACTOR           (2 << 16)
 
 void Mobile_IN_Move(ControlInfo *input)
 {
