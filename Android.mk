@@ -230,6 +230,7 @@ blood_game_objs := \
 	blood_game_objs += blood/src/nnextcitem.cpp
 	blood_game_objs += blood/src/nnextslaser.cpp
     blood_game_objs += blood/src/aicdud.cpp
+    blood_game_objs += blood/src/aipatrol.cpp
 
 
 libsmackerdec_objs := \
