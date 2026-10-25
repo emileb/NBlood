@@ -1263,6 +1263,7 @@ SWITCH switches[] = {
     { "screen_width", 46, 1 },
     { "screen_height", 47, 1 },
     { "secondary_path", 48, 1 },
+    { "set", 49, 2 },
 #endif
 
     { NULL, 0, 0 }
@@ -1341,6 +1342,33 @@ void PrintHelp(void)
 int g_screenWidthCmd = 640;
 int g_screenHeightCmd =480;
 int g_screenBppCmd = 32;
+#endif
+
+#ifdef __ANDROID__
+// -set <cvar> <value> from the launcher, applied after the config files and autoexec.cfg so they override them
+static char *g_androidCvars[64];
+static int g_numAndroidCvars;
+
+static void G_AddAndroidCvar(char const *name, char const *value)
+{
+    if (g_numAndroidCvars >= ARRAY_SSIZE(g_androidCvars))
+        return;
+
+    char buf[256];
+    Bsnprintf(buf, sizeof(buf), "%s \"%s\"", name, value);
+    g_androidCvars[g_numAndroidCvars++] = Xstrdup(buf);
+}
+
+void G_ApplyAndroidCvars(void)
+{
+    for (int i = 0; i < g_numAndroidCvars; i++)
+    {
+        initprintf("Launcher setting: %s\n", g_androidCvars[i]);
+        OSD_Dispatch(g_androidCvars[i]);
+        Xfree(g_androidCvars[i]);
+    }
+    g_numAndroidCvars = 0;
+}
 #endif
 
 void ParseOptions(void)
@@ -1603,6 +1631,10 @@ void ParseOptions(void)
         case 48:
             initprintf("Adding secondary path: %s\n", OptArgv[0]);
             addsearchpath_user(OptArgv[0], 0);
+            break;
+        case 49:
+            if (OptArgc == 2)
+                G_AddAndroidCvar(OptArgv[0], OptArgv[1]);
             break;
 #endif
         }
@@ -1882,6 +1914,9 @@ int app_main(int argc, char const * const * argv)
     InitVersionString();
 
     OSD_Exec("autoexec.cfg");
+#ifdef __ANDROID__
+    G_ApplyAndroidCvars(); // Launcher options override the config files and autoexec.cfg
+#endif
 
     if (!bQuickStart)
         credLogosDos();
