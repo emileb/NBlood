@@ -1264,6 +1264,7 @@ SWITCH switches[] = {
     { "screen_height", 47, 1 },
     { "secondary_path", 48, 1 },
     { "set", 49, 2 },
+    { "game_path", 50, 1 },
 #endif
 
     { NULL, 0, 0 }
@@ -1345,6 +1346,8 @@ int g_screenBppCmd = 32;
 #endif
 
 #ifdef __ANDROID__
+void G_SetAndroidGamePath(const char *path);
+
 // -set <cvar> <value> from the launcher, applied after the config files and autoexec.cfg so they override them
 static char *g_androidCvars[64];
 static int g_numAndroidCvars;
@@ -1635,6 +1638,11 @@ void ParseOptions(void)
         case 49:
             if (OptArgc == 2)
                 G_AddAndroidCvar(OptArgv[0], OptArgv[1]);
+            break;
+        case 50:
+            if (OptArgc < 1)
+                ThrowError("Missing argument");
+            G_SetAndroidGamePath(OptArgv[0]);
             break;
 #endif
         }

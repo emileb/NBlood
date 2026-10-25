@@ -99,6 +99,12 @@ static struct strllist *CommandPaths, *CommandGrps;
 
 #ifdef __ANDROID__
 extern char userFilesSubFolder[];
+
+// Game data folder from the launcher, used instead of the CWD so a relative mod folder is found on SAF storage
+void G_SetAndroidGamePath(const char *path)
+{
+    Bsnprintf(g_rootDir, sizeof(g_rootDir), "%s/", path);
+}
 #endif
 void G_ExtPreInit(int32_t argc,char const * const * argv)
 {
