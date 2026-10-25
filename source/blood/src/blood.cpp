@@ -2893,13 +2893,30 @@ bool LoadArtFile(const char *pzFile)
     return true;
 }
 
+#ifdef __ANDROID__
+// Blood: Fresh Supply ships Cryptic Passage's extra art as TILES007.ART/TILES015.ART in the addon folder
+static const char *pzCrypticArtsFS[] = {
+    "TILES007.ART", "TILES015.ART"
+};
+#endif
+
 void LoadExtraArts(void)
 {
     if (!pINISelected->pDescription)
         return;
     for (int i = 0; i < pINISelected->pDescription->nArts; i++)
     {
+#ifdef __ANDROID__
+        if (!LoadArtFile(pINISelected->pDescription->pzArts[i]) && pINISelected->pDescription->pzArts == pzCrypticArts && g_modDir[0] != '/')
+        {
+            char path[BMAX_PATH];
+            Bsnprintf(path, sizeof(path), "%s/%s", g_modDir, pzCrypticArtsFS[i]);
+            LOG_F(INFO, "Trying Fresh Supply art file \"%s\"", path);
+            LoadArtFile(path);
+        }
+#else
         LoadArtFile(pINISelected->pDescription->pzArts[i]);
+#endif
     }
 }
 
