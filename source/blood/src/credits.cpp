@@ -71,6 +71,11 @@ char DoFade(char r, char g, char b, int nTicks)
     {
         while (totalclock < gFrameClock) { gameHandleEvents();};
         gFrameClock += 2;
+#ifdef __ANDROID__
+        // GL back buffers aren't preserved across swaps; every GL-mode fade here is of a black screen
+        if (videoGetRenderMode() != REND_CLASSIC)
+            videoClearScreen(0);
+#endif
         scrNextPage();
         scrFadeAmount(divscale16(ClipHigh((int)totalclock, nTicks), nTicks));
         if (keyJoyGetScan())
@@ -88,6 +93,11 @@ char DoUnFade(int nTicks)
     {
         while (totalclock < gFrameClock) { gameHandleEvents(); };
         gFrameClock += 2;
+#ifdef __ANDROID__
+        // GL back buffers aren't preserved across swaps; every GL-mode fade here is of a black screen
+        if (videoGetRenderMode() != REND_CLASSIC)
+            videoClearScreen(0);
+#endif
         scrNextPage();
         scrFadeAmount(0x10000-divscale16(ClipHigh((int)totalclock, nTicks), nTicks));
         if (keyJoyGetScan())
@@ -107,6 +117,9 @@ void credLogosDos(void)
 
     if (!credPlaySmk("LOGO.SMK", "logo811m.wav", 300) && !credPlaySmk("movie/LOGO.SMK", "movie/logo811m.wav", 300))
     {
+#ifdef __ANDROID__
+        videoClearScreen(0); // The back buffer holds old frame data and the 4:3 logo doesn't cover the sides
+#endif
         rotatesprite(160<<16, 100<<16, 65536, 0, 2050, 0, 0, 0x4a, 0, 0, xdim-1, ydim-1);
         scrNextPage();
         sndStartSample("THUNDER2", 128, -1);
@@ -122,6 +135,9 @@ void credLogosDos(void)
 
     if (!credPlaySmk("GTI.SMK", "gti.wav", 301) && !credPlaySmk("movie/GTI.SMK", "movie/gti.wav", 301))
     {
+#ifdef __ANDROID__
+        videoClearScreen(0); // The back buffer holds old frame data and the 4:3 logo doesn't cover the sides
+#endif
         rotatesprite(160<<16, 100<<16, 65536, 0, 2052, 0, 0, 0x0a, 0, 0, xdim-1, ydim-1);
         scrNextPage();
         sndStartSample("THUNDER2", 128, -1);
