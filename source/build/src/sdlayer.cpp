@@ -2205,9 +2205,6 @@ int32_t videoUpdatePalette(int32_t start, int32_t num)
 //
 int32_t videoSetGamma(void)
 {
-#ifdef __ANDROID__
-	return 0;
-#endif
     if (novideo)
         return 0;
 
@@ -2220,6 +2217,10 @@ int32_t videoSetGamma(void)
             polymost_setColorCorrection(g_glColorCorrection);
         return 0;
     }
+#endif
+
+#ifdef __ANDROID__
+    return 0; // No gamma ramp on Android, the GL path above does colour correction in the shaders
 #endif
 
     int32_t i;
