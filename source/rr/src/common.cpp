@@ -230,6 +230,21 @@ int g_useCwd;
 static void G_LoadAddon(void);
 int32_t g_groupFileHandle;
 
+#ifdef __ANDROID__
+extern char userFilesSubFolder[];
+
+// Game data folder from the launcher, used instead of the CWD because a SAF folder can't be chdir'd into
+static char const *g_androidGamePath;
+
+static char const *G_GetAndroidGamePath(int32_t argc, char const * const * argv)
+{
+    for (int i = 1; i < argc - 1; i++)
+        if (!Bstrcasecmp(argv[i], "-game_path"))
+            return argv[i + 1];
+    return NULL;
+}
+#endif
+
 void G_ExtPreInit(int32_t argc,char const * const * argv)
 {
     g_useCwd = G_CheckCmdSwitch(argc, argv, "-usecwd");
@@ -241,6 +256,11 @@ void G_ExtPreInit(int32_t argc,char const * const * argv)
 #else
     getcwd(g_rootDir,BMAX_PATH);
     strcat(g_rootDir,"/");
+#endif
+#ifdef __ANDROID__
+    g_androidGamePath = G_GetAndroidGamePath(argc, argv);
+    if (g_androidGamePath)
+        Bsnprintf(g_rootDir, BMAX_PATH, "%s/", g_androidGamePath);
 #endif
 }
 
@@ -258,6 +278,10 @@ void G_ExtInit(void)
 
     if (getcwd(cwd,BMAX_PATH) && Bstrcmp(cwd,"/") != 0)
         addsearchpath(cwd);
+#ifdef __ANDROID__
+    if (g_androidGamePath)
+        addsearchpath(g_androidGamePath);
+#endif
 
     if (CommandPaths)
     {
@@ -288,6 +312,21 @@ void G_ExtInit(void)
         char *homedir;
         int32_t asperr;
 
+#ifdef __ANDROID__
+        homedir = getenv("USER_FILES");
+        Bsnprintf(cwd, sizeof(cwd), "%s/%s", homedir, userFilesSubFolder);
+        asperr = addsearchpath(cwd);
+        if (asperr == -2)
+        {
+            if (Bmkdir(cwd,S_IRWXU) == 0) asperr = addsearchpath(cwd);
+            else asperr = -1;
+        }
+        if (asperr == 0)
+            Bchdir(cwd);
+
+        if (g_modDir[0] != '/') // Create the mod folder so saves work
+            Bmkdir(g_modDir,S_IRWXU);
+#else
         if ((homedir = Bgethomedir()))
         {
             Bsnprintf(cwd,sizeof(cwd),"%s/"
@@ -309,6 +348,7 @@ void G_ExtInit(void)
                 Bchdir(cwd);
             Xfree(homedir);
         }
+#endif
     }
 
     // JBF 20031220: Because it's annoying renaming GRP files whenever I want to test different game data

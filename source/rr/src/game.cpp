@@ -43,10 +43,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "al_midi.h"
 #include "playmve.h"
 
-#ifdef __ANDROID__
-#include "android.h"
-#endif
-
 // Uncomment to prevent anything except mirrors from drawing. It is sensible to
 // also uncomment ENGINE_CLEAR_SCREEN in build/src/engine_priv.h.
 //#define DEBUG_MIRRORS_ONLY
@@ -6931,17 +6927,6 @@ FAKE_F3:
             ud.last_overhead = ud.overhead_on;
         }
 
-#ifdef __ANDROID__
-        if (ud.overhead_on == 1)
-            ud.scrollmode = 0;
-        else if (ud.overhead_on == 2)
-        {
-            ud.scrollmode = 1;
-            ud.folx = g_player[screenpeek].ps->opos.x;
-            ud.foly = g_player[screenpeek].ps->opos.y;
-            ud.fola = g_player[screenpeek].ps->oang;
-        }
-#endif
         g_restorePalette = 1;
         G_UpdateScreenArea();
     }
@@ -7522,6 +7507,7 @@ static void G_Cleanup(void)
 void G_Shutdown(void)
 {
     CONFIG_WriteSetup(0);
+#ifndef __ANDROID__ // Don't do this as the process is killed
     S_SoundShutdown();
     S_MusicShutdown();
     CONTROL_Shutdown();
@@ -7532,6 +7518,7 @@ void G_Shutdown(void)
     FreeGroups();
     OSD_Cleanup();
     uninitgroupfile();
+#endif
     Bfflush(NULL);
 }
 
@@ -8506,6 +8493,9 @@ int app_main(int argc, char const * const * argv)
 
     OSD_Exec(tempbuf);
     OSD_Exec("autoexec.cfg");
+#ifdef __ANDROID__
+    G_ApplyAndroidCvars(); // Launcher options override the config files and autoexec.cfg
+#endif
 
     CONFIG_SetDefaultKeys(keydefaults, true);
 
@@ -8777,12 +8767,6 @@ MAIN_LOOP_RESTART:
                     {
                         G_MoveLoop();
                         S_Update();
-#ifdef __ANDROID__
-                        inputfifo[0][myconnectindex].fvel = 0;
-                        inputfifo[0][myconnectindex].svel = 0;
-                        inputfifo[0][myconnectindex].avel = 0;
-                        inputfifo[0][myconnectindex].horz = 0;
-#endif
                     }
 
                     if (totalclock - moveClock >= TICSPERFRAME)

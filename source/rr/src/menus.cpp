@@ -3939,7 +3939,11 @@ static void Menu_PreInput(MenuEntry_t *entry)
     {
 
     case MENU_KEYBOARDKEYS:
+#ifdef __ANDROID__
+        if (KB_KeyPressed(sc_Delete) || KB_KeyPressed(sc_BackSpace))
+#else
         if (KB_KeyPressed(sc_Delete))
+#endif
         {
             auto *column = (MenuCustom2Col_t*)entry->entry;
             char key[2];
@@ -3949,6 +3953,9 @@ static void Menu_PreInput(MenuEntry_t *entry)
             CONFIG_MapKey(M_KEYBOARDKEYS.currentEntry, ud.config.KeyboardKeys[M_KEYBOARDKEYS.currentEntry][0], key[0], ud.config.KeyboardKeys[M_KEYBOARDKEYS.currentEntry][1], key[1]);
             S_PlaySound(RR ? 335 : KICK_HIT);
             KB_ClearKeyDown(sc_Delete);
+#ifdef __ANDROID__
+            KB_ClearKeyDown(sc_BackSpace);
+#endif
         }
         break;
 
@@ -3991,6 +3998,10 @@ static void Menu_PreOptionListDraw(MenuEntry_t *entry, const vec2_t origin)
         break;
     }
 }
+
+#ifdef __ANDROID__
+extern bool g_bindingbutton;
+#endif
 
 static int32_t Menu_PreCustom2ColScreen(MenuEntry_t *entry)
 {
@@ -5493,10 +5504,6 @@ static void Menu_AboutToStartDisplaying(Menu_t * m)
 
 static void Menu_ChangingTo(Menu_t * m)
 {
-#ifdef __ANDROID__
-    if (m->menuID == MENU_TOUCHBUTTONS)
-        AndroidToggleButtonEditor();
-#endif
 
     switch (m->type)
     {
@@ -8436,6 +8443,9 @@ static void Menu_RunInput(Menu_t *cm)
                     }
                     else if (Menu_PreCustom2ColScreen(currentry))
                         ((MenuCustom2Col_t*)currentry->entry)->screenOpen = 0;
+#ifdef __ANDROID__
+                    g_bindingbutton = ((MenuCustom2Col_t*)currentry->entry)->screenOpen;
+#endif
                 }
             }
 

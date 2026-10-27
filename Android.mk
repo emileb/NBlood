@@ -281,3 +281,88 @@ LOCAL_SHARED_LIBRARIES := touchcontrols openal SDL2 SDL2_mixer SDL2_image saffal
 
 
 include $(BUILD_SHARED_LIBRARY)
+
+
+# RedNukem (Redneck Rampage, Rides Again, Duke 64), shares the engine sources above
+include $(CLEAR_VARS)
+
+LOCAL_MODULE    := rednukem
+
+LOCAL_C_INCLUDES := \
+$(LOCAL_PATH)/glad/include \
+$(LOCAL_PATH)/build/include \
+$(LOCAL_PATH)/audiolib/include \
+$(LOCAL_PATH)/mact/include \
+$(LOCAL_PATH)/rr/src \
+$(LOCAL_PATH)/mimalloc/include \
+$(LOCAL_PATH)/libxmp-lite/include \
+$(LOCAL_PATH)/imgui/include \
+$(SDL_INCLUDE_PATHS) \
+$(TOP_DIR)/Clibs_OpenTouch \
+$(TOP_DIR)/Clibs_OpenTouch/raze \
+$(TOP_DIR)/MobileTouchControls  \
+$(TOP_DIR)/AudioLibs_OpenTouch/liboggvorbis/include  \
+
+
+LOCAL_CFLAGS := -O1 -Wno-ignored-attributes -DRENDERTYPESDL=1 -DUSE_OPENGL -DHAVE_XMP -DHAVE_VORBIS -DHAVE_FLAC -DENGINE_NAME=\"rednukem\" -DEDUKE32 -w -Wno-format  -Wformat=0 -Wno-format-security
+LOCAL_CPPFLAGS := -fexceptions
+
+rr_game_objs := \
+    rr/src/game.cpp \
+    rr/src/global.cpp \
+    rr/src/actors.cpp \
+    rr/src/gamedef.cpp \
+    rr/src/gameexec.cpp \
+    rr/src/gamevars.cpp \
+    rr/src/player.cpp \
+    rr/src/premap.cpp \
+    rr/src/sector.cpp \
+    rr/src/anim.cpp \
+    rr/src/common.cpp \
+    rr/src/config.cpp \
+    rr/src/demo.cpp \
+    rr/src/input.cpp \
+    rr/src/menus.cpp \
+    rr/src/namesdyn.cpp \
+    rr/src/net.cpp \
+    rr/src/savegame.cpp \
+    rr/src/rts.cpp \
+    rr/src/osdfuncs.cpp \
+    rr/src/osdcmds.cpp \
+    rr/src/grpscan.cpp \
+    rr/src/sounds.cpp \
+    rr/src/soundsdyn.cpp \
+    rr/src/cheats.cpp \
+    rr/src/sbar.cpp \
+    rr/src/screentext.cpp \
+    rr/src/screens.cpp \
+    rr/src/cmdline.cpp \
+    rr/src/rrdh.cpp \
+    rr/src/filestream.cpp \
+    rr/src/playmve.cpp \
+
+n64_objs := \
+    rr/src/n64/reality.cpp \
+    rr/src/n64/reality_music.cpp \
+    rr/src/n64/reality_player.cpp \
+    rr/src/n64/reality_render.cpp \
+    rr/src/n64/reality_sbar.cpp \
+    rr/src/n64/reality_screens.cpp \
+    rr/src/n64/reality_sound.cpp \
+    rr/src/n64/reality_util.cpp \
+
+RR_ANDROID_SRC_FILES = \
+     android/game_interface_rr.cpp \
+     ../../Clibs_OpenTouch/raze/touch_interface.cpp \
+     ../../Clibs_OpenTouch/touch_interface_base.cpp \
+     ../../Clibs_OpenTouch/android_jni_inc.cpp \
+
+LOCAL_SRC_FILES =  $(RR_ANDROID_SRC_FILES) $(engine_objs) $(glad_objs) $(mact_objs) $(audiolib_objs) $(rr_game_objs) $(n64_objs) $(imgui_objs)
+
+LOCAL_LDLIBS :=  -llog -lOpenSLES -lGLESv2
+
+LOCAL_STATIC_LIBRARIES := logwritter flac nblood_xmp
+LOCAL_SHARED_LIBRARIES := touchcontrols openal SDL2 SDL2_mixer SDL2_image saffal
+
+
+include $(BUILD_SHARED_LIBRARY)

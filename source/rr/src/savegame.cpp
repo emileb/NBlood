@@ -437,7 +437,7 @@ static void G_RestoreTimers(void)
 
 //////////
 
-#ifdef __ANDROID__
+#if 0 // Old Android port, not needed
 static void G_SavePalette(void)
 {
     int32_t pfil;
@@ -513,10 +513,6 @@ uint16_t G_CountOldSaves(void)
 
 int32_t G_SavePlayer(savebrief_t & sv, bool isAutoSave)
 {
-#ifdef __ANDROID__
-    G_SavePalette();
-#endif
-
     G_SaveTimers();
 
     Net_WaitForEverybody();

@@ -26,10 +26,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "renderlayer.h"
 #include "cmdline.h"
 
-#ifdef __ANDROID__
-# include "android.h"
-#endif
-
 #if defined RENDERTYPESDL && defined SDL_TARGET && SDL_TARGET > 1
 # include "sdl_inc.h"
 #endif
@@ -203,19 +199,6 @@ void CONFIG_SetDefaults(void)
     int32_t i;
 
     ud.config.scripthandle = -1;
-#ifdef __ANDROID__
-    droidinput.forward_sens = 5.f;
-    droidinput.strafe_sens = 5.f;
-    droidinput.pitch_sens = 5.f;
-    droidinput.yaw_sens = 5.f;
-    droidinput.hideStick = 0;
-    droidinput.gameControlsAlpha = 0.5;
-    droidinput.toggleCrouch = 1;
-    droidinput.quickSelectWeapon = 1;
-
-    ud.setup.xdim = droidinfo.screen_width;
-    ud.setup.ydim = droidinfo.screen_height;
-#else
 # if defined RENDERTYPESDL && SDL_MAJOR_VERSION > 1
     uint32_t inited = SDL_WasInit(SDL_INIT_VIDEO);
     if (inited == 0)
@@ -235,7 +218,6 @@ void CONFIG_SetDefaults(void)
         ud.setup.xdim = 1024;
         ud.setup.ydim = 768;
     }
-#endif
 
 #ifdef USE_OPENGL
     ud.setup.bpp = 32;
@@ -247,8 +229,6 @@ void CONFIG_SetDefaults(void)
     ud.config.FXVolume = 255;
 #if defined(_WIN32)
     ud.config.MixRate = 44100;
-#elif defined __ANDROID__
-    ud.config.MixRate = droidinfo.audio_sample_rate;
 #else
     ud.config.MixRate = 48000;
 #endif
@@ -324,7 +304,11 @@ void CONFIG_SetDefaults(void)
     ud.angleinterpolation = 0;
     ud.setup.usejoystick = 1;
     ud.setup.forcesetup = 1;
+#ifdef __ANDROID__
+    ud.setup.noautoload = 0;
+#else
     ud.setup.noautoload = 1;
+#endif
     ud.setup.fullscreen = 1;
     ud.setup.usemouse = 1;
 
@@ -730,6 +714,12 @@ void CONFIG_SetGameControllerDefaultsClear()
     }
 }
 
+#ifdef __ANDROID__
+extern int g_screenWidthCmd;
+extern int g_screenHeightCmd;
+extern int g_screenBppCmd;
+#endif
+
 int32_t CONFIG_ReadSetup(void)
 {
     int32_t dummy;
@@ -836,6 +826,19 @@ int32_t CONFIG_ReadSetup(void)
     SCRIPT_GetNumber(ud.config.scripthandle, "Screen Setup", "ScreenBPP", &ud.setup.bpp);
     
     if (ud.setup.bpp < 8) ud.setup.bpp = 32;
+
+#ifdef __ANDROID__
+    if(g_screenWidthCmd)
+        ud.setup.xdim = g_screenWidthCmd;
+
+    if(g_screenHeightCmd)
+        ud.setup.ydim = g_screenHeightCmd;
+
+    if(g_screenBppCmd)
+        ud.setup.bpp = g_screenBppCmd;
+
+    ud.setup.noautoload = 0; // This is now controlled by the command line
+#endif
 
 #ifdef POLYMER
     int32_t rendmode = 0;
