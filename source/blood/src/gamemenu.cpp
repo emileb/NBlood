@@ -329,6 +329,25 @@ void CGameMenuMgr::Process(void)
         }
         joyold = joy;
     }
+#ifdef __ANDROID__
+    // Touch arrows send one key press, so repeat left/right while held (fine slider steps)
+    static uint32_t repeatTime;
+    if (event.at0 == kMenuEventLeft || event.at0 == kMenuEventRight)
+        repeatTime = timerGetTicks() + 400;
+    else if (event.at0 == 0 && repeatTime)
+    {
+        bool const left = keystatus[sc_LeftArrow] || keystatus[sc_kpad_4];
+        bool const right = keystatus[sc_RightArrow] || keystatus[sc_kpad_6];
+        if (!left && !right)
+            repeatTime = 0;
+        else if (timerGetTicks() >= repeatTime)
+        {
+            event.at0 = left ? kMenuEventLeft : kMenuEventRight;
+            event.at2 = left ? sc_LeftArrow : sc_RightArrow;
+            repeatTime = timerGetTicks() + 50;
+        }
+    }
+#endif
     if (pActiveMenu->Event(event))
         Pop();
 
